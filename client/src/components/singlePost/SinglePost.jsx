@@ -9,6 +9,7 @@ import axiosBaseURL from "../../pages/httpCommon";
 import Container from "react-bootstrap/esm/Container";
 import Button from "react-bootstrap/esm/Button";
 import "./singlePost.css";
+import DefaultMap from "../location/DefaultMap";
 
 export default function SinglePost() {
   const location = useLocation();
@@ -114,6 +115,7 @@ export default function SinglePost() {
             Update
           </Button>
         )}
+        {post.coords && <DefaultMap coordinates={post.coords}/>}
       </Container>
     </div>
   );

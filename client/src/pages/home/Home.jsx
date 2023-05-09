@@ -5,6 +5,7 @@ import "./home.css";
 import { useLocation } from "react-router";
 import axiosBaseURL from "../httpCommon";
 import { Context } from "../../context/Context";
+import Advertisment from "../../components/advertisments/Advertisment";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -43,6 +44,7 @@ export default function Home() {
     <>
       <Header />
       {/* if( search.params.id ) */}
+      <Advertisment/>
       <div className="home">
         <Posts posts={posts} />
       </div>

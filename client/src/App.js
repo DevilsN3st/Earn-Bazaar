@@ -11,6 +11,8 @@ import { useContext } from "react";
 import { Context } from "./context/Context";
 import Messenger from "./pages/messenger/Messenger";
 import Profile from "./pages/profile/Profile";
+import Cancel from "./pages/paymentResult/Cancel";
+import Success from "./pages/paymentResult/Success";
 // import Rightbar from "./components/rightbar/Rightbar";
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
         <Route path="/messenger" element={user ? <Messenger/> : <Main />}/>
         <Route path="/post/:postId" element={<Single />}/>
         <Route path="/profile/:userId" element={<Profile />}/>
+        <Route path="/success" element={<Success />}/>
+        <Route path="/cancel" element={<Cancel />}/>
       </Routes>
     </BrowserRouter>
   );

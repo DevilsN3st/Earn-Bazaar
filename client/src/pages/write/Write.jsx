@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./write.css";
 import axios from "axios";
 import { Context } from "../../context/Context";
@@ -7,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axiosBaseURL, { writePost } from "../httpCommon";
+import DefaultMap from "../../components/location/DefaultMap";
 
 export default function Write() {
   const [title, setTitle] = useState("");
@@ -19,6 +20,19 @@ export default function Write() {
   const { user } = useContext(Context);
   const [value, onChange] = useState(new Date());
 
+  const [coordinates, setCoordinates] = useState();
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (location) {
+      const navCoordinates = {
+        longitude : location.coords.longitude,
+        latitude : location.coords.latitude
+      }
+      setCoordinates(navCoordinates);
+    });
+    console.log("write", coordinates)
+  }, [navigator.geolocation]);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPost = {
@@ -29,7 +43,7 @@ export default function Write() {
       location,
       category,
       reward,
-      guest
+      guest,
     };
     if (file) {
       const data = new FormData();
@@ -78,6 +92,9 @@ export default function Write() {
             autoFocus={true}
             onChange={(e) => setLocation(e.target.value)}
           />
+        </div>
+        <div className="writeFormGroup">
+          {coordinates && <DefaultMap coordinates={coordinates} />}
         </div>
         <div className="writeFormGroup">
           <Container>
