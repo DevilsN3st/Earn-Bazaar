@@ -34,9 +34,9 @@ function DefaultMap({coordinates}) {
   return (
     <AzureMapsProvider>
       <div style={{ height: "300px", width: "300px" }}>
-        <AzureMap options={option} >
+        {option.center && <AzureMap options={option} >
           <AzureMapHtmlMarker options = {option2}/>
-        </AzureMap>
+        </AzureMap>}
       </div>
     </AzureMapsProvider>
   );
