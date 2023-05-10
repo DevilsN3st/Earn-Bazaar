@@ -20,8 +20,7 @@ const PostSchema = new mongoose.Schema(
       required: true,
     },
     coords: {
-      type: String,
-      required: true,
+      type: Object,
     },
     reward: {
       type: String,
@@ -49,10 +48,9 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isAdmin:{
-      type: Boolean,
+    userId:{
+      type: String,
       required: true,
-      default: false,
     }
 
   },

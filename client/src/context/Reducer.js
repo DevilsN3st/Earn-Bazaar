@@ -3,18 +3,21 @@ const Reducer = (state, action) => {
     case "LOGIN_START":
       return {
         user: null,
+        token: null,
         isFetching: true,
         error: false,
       };
     case "LOGIN_SUCCESS":
       return {
-        user: action.payload,
+        user: action.payload.user,
+        token: action.payload.token,
         isFetching: false,
         error: false,
       };
     case "LOGIN_FAILURE":
       return {
         user: null,
+        token: null,
         isFetching: false,
         error: true,
       };
@@ -25,12 +28,14 @@ const Reducer = (state, action) => {
       };
     case "UPDATE_SUCCESS":
       return {
+        ...state,
         user: action.payload,
         isFetching: false,
         error: false,
       };
     case "UPDATE_FAILURE":
       return {
+        ...state,
         user: state.user,
         isFetching: false,
         error: true,
@@ -38,6 +43,7 @@ const Reducer = (state, action) => {
     case "LOGOUT":
       return {
         user: null,
+        token: null,
         isFetching: false,
         error: false,
       };

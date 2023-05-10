@@ -17,10 +17,10 @@ export default function SinglePost() {
   const [post, setPost] = useState({});
   const PFimage =
     `${process.env.REACT_APP_AXIOS_BASEURL}/images/` ||
-    "http://localhost:5000/images/";
+    "http://localhost:5000/images";
   const PFpdf =
     `${process.env.REACT_APP_AXIOS_BASEURL}/pdfs/` ||
-    "http://localhost:5000/pdfs/";
+    "http://localhost:5000/pdfs";
   const { user } = useContext(Context);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -40,12 +40,12 @@ export default function SinglePost() {
 
   const handleDelete = async () => {
     try {
-      await axiosBaseURL.delete(`/posts/${post._id}`, {
+      axiosBaseURL.delete(`/posts/${post._id}`, {
         data: { username: user.username },
       });
       window.location.replace("/");
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data);
     }
   };
 
@@ -58,7 +58,7 @@ export default function SinglePost() {
       });
       setUpdateMode(false);
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data);
     }
   };
   return (

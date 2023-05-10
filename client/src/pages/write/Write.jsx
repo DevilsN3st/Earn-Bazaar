@@ -21,7 +21,6 @@ export default function Write() {
   const [filePdf, setFilePdf] = useState(null);
   const { user } = useContext(Context);
   const [value, onChange] = useState(new Date());
-
   const [coordinates, setCoordinates] = useState();
 
   useEffect(() => {
@@ -47,6 +46,9 @@ export default function Write() {
       reward,
       guest,
     };
+    if( coordinates.latitude && coordinates.longitude ){
+      newPost.coords = coordinates;
+    }
     if (fileImg) {
       const dataImg = new FormData();
       const fileNameImg = Date.now() + fileImg.name;
