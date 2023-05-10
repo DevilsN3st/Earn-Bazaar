@@ -8,6 +8,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axiosBaseURL, { writePost } from "../httpCommon";
 import DefaultMap from "../../components/location/DefaultMap";
+import Button from "react-bootstrap/esm/Button";
 
 export default function Write() {
   const [title, setTitle] = useState("");
@@ -16,7 +17,8 @@ export default function Write() {
   const [reward, setReward] = useState("");
   const [guest, setGuest] = useState("");
   const [desc, setDesc] = useState("");
-  const [file, setFile] = useState(null);
+  const [fileImg, setFileImg] = useState(null);
+  const [filePdf, setFilePdf] = useState(null);
   const { user } = useContext(Context);
   const [value, onChange] = useState(new Date());
 
@@ -25,14 +27,14 @@ export default function Write() {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function (location) {
       const navCoordinates = {
-        longitude : location.coords.longitude,
-        latitude : location.coords.latitude
-      }
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude,
+      };
       setCoordinates(navCoordinates);
     });
-    console.log("write", coordinates)
+    // console.log("write", coordinates)
   }, [navigator.geolocation]);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPost = {
@@ -45,14 +47,24 @@ export default function Write() {
       reward,
       guest,
     };
-    if (file) {
-      const data = new FormData();
-      const filename = Date.now() + file.name;
-      data.append("name", filename);
-      data.append("file", file);
-      newPost.photo = filename;
+    if (fileImg) {
+      const dataImg = new FormData();
+      const fileNameImg = Date.now() + fileImg.name;
+      dataImg.append("name", fileNameImg);
+      dataImg.append("file", fileImg);
+      newPost.photo = fileNameImg;
       try {
-        await axiosBaseURL.post("/upload", data);
+        await axiosBaseURL.post("/upload/images", dataImg);
+      } catch (err) {}
+    }
+    if (filePdf) {
+      const dataPdf = new FormData();
+      const fileNamePdf = Date.now() + filePdf.name;
+      dataPdf.append("name", fileNamePdf);
+      dataPdf.append("file", filePdf);
+      newPost.brochure = fileNamePdf;
+      try {
+        await axiosBaseURL.post("/upload/pdfs", dataPdf);
       } catch (err) {}
     }
     try {
@@ -62,8 +74,8 @@ export default function Write() {
   };
   return (
     <div className="write">
-      {file && (
-        <img className="writeImg" src={URL.createObjectURL(file)} alt="" />
+      {fileImg && (
+        <img className="writeImg" src={URL.createObjectURL(fileImg)} alt="" />
       )}
       <form className="writeForm" onSubmit={handleSubmit}>
         <div className="writeFormGroup">
@@ -74,7 +86,7 @@ export default function Write() {
             type="file"
             id="fileInput"
             style={{ display: "none" }}
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={(e) => setFileImg(e.target.files[0])}
           />
           <input
             type="text"
@@ -85,9 +97,27 @@ export default function Write() {
           />
         </div>
         <div className="writeFormGroup">
+          <label htmlFor="fileInputPdf">
+            <i className="writeIcon fas fa-plus"></i>
+          </label>
+          <input
+            type="file"
+            id="fileInputPdf"
+            style={{ display: "none" }}
+            onChange={(e) => setFilePdf(e.target.files[0])}
+          />
+          {!filePdf ? (
+            <div className="writeInput">Upload your Brochure here!</div>
+          ) : (
+            <a className="writeInput" href={URL.createObjectURL(filePdf)}>
+              Uploaded Pdf
+            </a>
+          )}
+        </div>
+        <div className="writeFormGroup">
           <input
             type="text"
-            placeholder="Event Location"
+            placeholder="Event Location Name"
             className="writeInput"
             autoFocus={true}
             onChange={(e) => setLocation(e.target.value)}

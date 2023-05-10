@@ -15,7 +15,12 @@ export default function SinglePost() {
   const location = useLocation();
   const path = location.pathname.split("/")[2];
   const [post, setPost] = useState({});
-  const PF = `${process.env.REACT_APP_AXIOS_BASEURL}/images/` || "http://localhost:5000/images/";
+  const PFimage =
+    `${process.env.REACT_APP_AXIOS_BASEURL}/images/` ||
+    "http://localhost:5000/images/";
+  const PFpdf =
+    `${process.env.REACT_APP_AXIOS_BASEURL}/pdfs/` ||
+    "http://localhost:5000/pdfs/";
   const { user } = useContext(Context);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -39,7 +44,9 @@ export default function SinglePost() {
         data: { username: user.username },
       });
       window.location.replace("/");
-    } catch (err) { console.log(err)}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleUpdate = async () => {
@@ -50,13 +57,15 @@ export default function SinglePost() {
         desc,
       });
       setUpdateMode(false);
-    } catch (err) {console.log(err)}
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <div className="singlePost">
       <Container className="singlePostWrapper">
         {post.photo && (
-          <img src={PF + post.photo} alt="" className="singlePostImg" />
+          <img src={PFimage + post.photo} alt="" className="singlePostImg" />
         )}
         {updateMode ? (
           <input
@@ -69,25 +78,29 @@ export default function SinglePost() {
         ) : (
           <h1 className="singlePostTitle">
             {title}
-            {(post.username === user?.username) && (
+            {post.username === user?.username && (
               <div className="singlePostEdit">
                 <i
                   className="singlePostIcon far fa-edit"
                   onClick={() => setUpdateMode(true)}
-                >edit</i>
+                >
+                  edit
+                </i>
                 <i
                   className="singlePostIcon far fa-trash-alt"
                   onClick={handleDelete}
-                >delete</i>
+                >
+                  delete
+                </i>
               </div>
             )}
           </h1>
         )}
         <div className="singlePostInfo">
           <span className="singlePostAuthor">
-            Author: 
-            {(user?.username === post.username) ? (
-                <Link to='/settings'>My Profile</Link>
+            Author:
+            {user?.username === post.username ? (
+              <Link to="/settings">My Profile</Link>
             ) : (
               <Link to={`/profile/${post.username}`} className="link">
                 <b> {post.username}</b>
@@ -115,7 +128,14 @@ export default function SinglePost() {
             Update
           </Button>
         )}
-        {post.coords && <DefaultMap coordinates={post.coords}/>}
+        {post.coords && <DefaultMap coordinates={post.coords} />}
+        { post.brochure && (
+            <a href={PFpdf + post.brochure} target="_blank" rel="noopener noreferrer" download>
+          <Button>
+              Download Brochure
+          </Button>
+            </a>
+        )}
       </Container>
     </div>
   );

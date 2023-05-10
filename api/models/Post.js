@@ -19,6 +19,10 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    coords: {
+      type: String,
+      required: true,
+    },
     reward: {
       type: String,
     },
@@ -31,6 +35,9 @@ const PostSchema = new mongoose.Schema(
     photo: {
       type: String,
     },
+    brochure: {
+      type: String,
+    },
     username: {
       type: String,
       required: true,
@@ -41,7 +48,13 @@ const PostSchema = new mongoose.Schema(
     userCategory:{
       type: String,
       required: true,
+    },
+    isAdmin:{
+      type: Boolean,
+      required: true,
+      default: false,
     }
+
   },
   { timestamps: true }
 );
