@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/users");
 const postRoute = require("./routes/posts");
@@ -12,33 +11,19 @@ const donationRoute = require("./routes/donation");
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
+const { connectDB } = require("./config/db");
+const { storage } = require("./config/storage");
 
 
 dotenv.config();
 app.use(cors());
 app.use(express.json());
-app.use("/images", express.static(path.join(__dirname, "/images")));
-app.use("/pdfs", express.static(path.join(__dirname, "/pdfs")));
+app.use("/public", express.static(path.join(__dirname, "/public")));
 
-mongoose.set('strictQuery', false);
-
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(console.log("Connected to MongoDB"))
-  .catch((err) => console.log(err));
-
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    let type = req.params.type;
-    let path = `${type}`;
-    callback(null, path);
-  },
-  filename: (req, file, callback) => {
-    callback(null, req.body.name);
-  },
-});
+connectDB();
 
 const upload = multer({ storage: storage });
+
 app.post("/api/upload/:type", upload.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });

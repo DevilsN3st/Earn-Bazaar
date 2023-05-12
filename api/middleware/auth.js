@@ -7,7 +7,6 @@ const auth = async (req, res, next) => {
         const isCustomAuth = token.length < 500;
         
         let decodeData;
-        if (!token ) {
             // console.log(token);
             req.unauthorized = false;
             if (token && isCustomAuth) {
@@ -17,10 +16,7 @@ const auth = async (req, res, next) => {
                 decodeData = jwt.decode(token);
                 req.userId = decodeData?.sub;
             }
-        }
-        else{
-            req.unauthorized = true;
-        }
+
         // console.log( req.userId);
     next();
   } catch (error) {

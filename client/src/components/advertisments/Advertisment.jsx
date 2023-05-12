@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "react-bootstrap";
 
 const Advertisment = () => {
   const [moneyToDonate, setMoneyToDonate] = useState(0);
@@ -27,14 +28,14 @@ const Advertisment = () => {
 
   return (
     <div>
-      <h1>The Green Society</h1>
+      <h1>Help Us by contributing.</h1>
       <input
         placeholder="amount you will to contribute"
         value={moneyToDonate}
         onChange={(e) => setMoneyToDonate(e.target.value)}
       />
 
-      <button onClick={handleSubmit}>Donate Us!</button>
+      <Button variant="secondary" onClick={handleSubmit}>Donate Us!</Button>
     </div>
   );
 };

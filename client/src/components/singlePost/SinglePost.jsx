@@ -16,11 +16,11 @@ export default function SinglePost() {
   const path = location.pathname.split("/")[2];
   const [post, setPost] = useState({});
   const PFimage =
-    `${process.env.REACT_APP_AXIOS_BASEURL}/images/` ||
-    "http://localhost:5000/images";
+    `${process.env.REACT_APP_AXIOS_BASEURL}/public/images/` ||
+    "http://localhost:5000/public/images";
   const PFpdf =
-    `${process.env.REACT_APP_AXIOS_BASEURL}/pdfs/` ||
-    "http://localhost:5000/pdfs";
+    `${process.env.REACT_APP_AXIOS_BASEURL}/public/pdfs/` ||
+    "http://localhost:5000/public/pdfs";
   const { user } = useContext(Context);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");

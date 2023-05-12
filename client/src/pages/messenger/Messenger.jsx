@@ -2,6 +2,7 @@ import "./messenger.css";
 // import Topbar from "../../components/topbar/Topbar";
 import Conversation from "../../components/conversations/Conversation";
 import Message from "../../components/message/Message";
+import VideoChat from "../videoChat/VideoChat";
 // import ChatOnline from "../../components/chatOnline/ChatOnline";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../../context/Context";
@@ -163,6 +164,7 @@ export default function Messenger() {
         </div>
         <div className="chatOnline">
           <div className="chatOnlineWrapper">
+            <VideoChat/>
             {/* <ChatOnline
               onlineUsers={onlineUsers}
               currentId={user._id}

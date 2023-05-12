@@ -4,12 +4,13 @@ import { Context } from "../../context/Context";
 import { signIn } from "../httpCommon";
 import "./login.css";
 
+import { GoogleLogin } from "@react-oauth/google";
+
 export default function Login() {
   const userRef = useRef();
   const passwordRef = useRef();
   const { dispatch, isFetching } = useContext(Context);
   const [error, setError] = useState(false);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,11 +50,25 @@ export default function Login() {
         </button>
       </form>
       <button className="loginRegisterButton btn btn-outline-secondary btn-lg">
-        <Link className="rm-txt-dec"to="/register">
+        <Link className="rm-txt-dec" to="/register">
           Register
         </Link>
       </button>
-      {error && <span style={{color:"red", marginTop:"10px"}}>Something went wrong!</span>}
+      <div className="loginForm">
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            console.log(credentialResponse);
+          }}
+          onError={() => {
+            console.log("Login Failed");
+          }}
+        />
+      </div >
+      {error && (
+        <span style={{ color: "red", marginTop: "10px" }}>
+          Something went wrong!
+        </span>
+      )}
     </div>
   );
 }

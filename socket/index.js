@@ -41,6 +41,21 @@ io.on("connection", (socket) => {
     });
   });
 
+
+  socket.emit("me", socket.id);
+  
+	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+	});
+
+	socket.on("answerCall", (data) => {
+    console.log("answered");
+		io.to(data.to).emit("callAccepted", data.signal)
+	});
+
+
+
+
   //when disconnect
   socket.on("disconnect", () => {
     console.log("a user disconnected!");

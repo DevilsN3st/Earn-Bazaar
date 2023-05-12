@@ -13,6 +13,8 @@ import Messenger from "./pages/messenger/Messenger";
 import Profile from "./pages/profile/Profile";
 import Cancel from "./pages/paymentResult/Cancel";
 import Success from "./pages/paymentResult/Success";
+import Donation from "./pages/donation/Donation";
+import VideoChat from "./pages/videoChat/VideoChat";
 // import Rightbar from "./components/rightbar/Rightbar";
 
 function App() {
@@ -22,17 +24,19 @@ function App() {
       <TopBar />
       {/* <Rightbar user={user}/> */}
       <Routes>
-        <Route path="/" element={user ? <Home /> : <Main />}/>
-        <Route path="/home" element={user ? <Home /> : <Main />}/>
-        <Route path="/register" element={user ? <Home /> : <Register />}/>
-        <Route path="/login" element={user ? <Home /> : <Login />}/>
-        <Route path="/write" element={user ? <Write /> : <Register />}/>
-        <Route path="/settings" element={user ? <Settings /> : <Register />}/>
-        <Route path="/messenger" element={user ? <Messenger/> : <Main />}/>
-        <Route path="/post/:postId" element={<Single />}/>
-        <Route path="/profile/:userId" element={<Profile />}/>
-        <Route path="/success" element={<Success />}/>
-        <Route path="/cancel" element={<Cancel />}/>
+        <Route path="/" element={user ? <Home /> : <Main />} />
+        <Route path="/home" element={user ? <Home /> : <Main />} />
+        <Route path="/register" element={user ? <Home /> : <Register />} />
+        <Route path="/login" element={user ? <Home /> : <Login />} />
+        <Route path="/write" element={user ? <Write /> : <Register />} />
+        <Route path="/settings" element={user ? <Settings /> : <Register />} />
+        <Route path="/messenger" element={user ? <Messenger /> : <Main />} />
+        <Route path="/post/:postId" element={<Single />} />
+        <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
+        <Route path="/donate" element={<Donation />} />
+        <Route path="/videochat" element={<VideoChat />} />
       </Routes>
     </BrowserRouter>
   );
