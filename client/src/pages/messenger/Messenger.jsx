@@ -10,26 +10,18 @@ import { Context } from "../../context/Context";
 import { io } from "socket.io-client";
 import axiosBaseURL from "../httpCommon";
 
+import { SocketContext } from '../videoChat/Context';
+
+
 export default function Messenger() {
-  const [conversations, setConversations] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  const socket = useRef();
+
   const { user } = useContext(Context);
-  const scrollRef = useRef();
+  const { sendMessageEmit, addUser, conversations, setConversations, currentChat, setCurrentChat, messages, setMessages, newMessage, setNewMessage, arrivalMessage, setArrivalMessageFirst } = useContext(SocketContext);
+  const scrollRef = useRef(); 
+  const [friendId, setFriendId] = useState(""); 
 
   useEffect(() => {
-    socket.current = io(process.env.REACT_APP_SOCKET_SERVER ||"ws://localhost:8900");
-    socket.current.on("getMessage", (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
+    setArrivalMessageFirst();
   }, []);
 
   
@@ -40,7 +32,7 @@ export default function Messenger() {
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
-    socket.current.emit("addUser", user._id);
+    addUser(user._id);
 //     socket.current.on("getUsers", (users) => {
 //       setOnlineUsers(
 //         user.followings.filter((f) => users.some((u) => u.userId === f))
@@ -74,7 +66,7 @@ export default function Messenger() {
     getMessages();
   }, [currentChat]);
   
-  console.log(currentChat);
+  // console.log(currentChat);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,12 +80,14 @@ export default function Messenger() {
       (member) => member !== user._id
     );
 
-    socket.current.emit("sendMessage", {
-      senderId: user._id,
-      receiverId: receiverId,
-      text: newMessage,
-    });
-    
+      const sendMessageProp = {
+        senderId: user._id,
+        receiverId: receiverId,
+        text: newMessage,
+      }
+
+    sendMessageEmit(sendMessageProp );
+
     try {
       let firstUserId = user._id;
       let secondUserId = receiverId;
@@ -119,14 +113,22 @@ export default function Messenger() {
 
   }
 
+  const handleConversations = (e,c) =>{
+    setCurrentChat(c);
+    const friendUserId = c.members.find((m) => m !== user._id);
+    setFriendId(friendUserId);
+  }
+  // console.log(user);
+
   return (
     <>
       <div className="messenger">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
             <input placeholder="Search for friends" className="chatMenuInput" onChange={e=>handleSearch(e)}/>
-            {conversations.map((c) => (
-              <div onClick={() => setCurrentChat(c)}>
+            {conversations?.map((c) => (
+              
+              <div onClick={(e)=>handleConversations(e,c)}>
                 <Conversation conversation={c} currentUser={user} />
               </div>
             ))}
@@ -137,7 +139,7 @@ export default function Messenger() {
             {currentChat ? (
               <>
                 <div className="chatBoxTop">
-                  {messages.map((m) => (
+                  {messages?.map((m) => (
                     <div ref={scrollRef}>
                       <Message message={m} own={m.sender === user._id} />
                     </div>
@@ -164,7 +166,7 @@ export default function Messenger() {
         </div>
         <div className="chatOnline">
           <div className="chatOnlineWrapper">
-            <VideoChat/>
+            <VideoChat friendId={friendId} userName={user?.username}/>
             {/* <ChatOnline
               onlineUsers={onlineUsers}
               currentId={user._id}

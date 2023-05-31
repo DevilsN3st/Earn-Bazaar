@@ -6,7 +6,9 @@ import Sidebar from './components/Sidebar';
 import Notifications from './components/Notifications';
 
 
-const VideoChat = () => {
+const VideoChat = ( props ) => {
+
+  // console.log("videochat",props);
 
   return (
     <div >
@@ -14,9 +16,8 @@ const VideoChat = () => {
         <h1 className='display-3'>Video Chat</h1>
       </Container>
       <VideoPlayer />
-      <Sidebar>
+      <Sidebar friendId={props.friendId} userName={props?.userName} />
         <Notifications />
-      </Sidebar>
     </div>
   );
 };

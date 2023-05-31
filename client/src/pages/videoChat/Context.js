@@ -4,8 +4,7 @@ import Peer from 'simple-peer';
 
 const SocketContext = createContext();
 
-const socket = io('http://localhost:8900');
-// const socket = io('https://warm-wildwood-81069.herokuapp.com');
+const socket = io('ws://localhost:8900');
 
 const ContextSocketProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
@@ -14,6 +13,12 @@ const ContextSocketProvider = ({ children }) => {
   const [name, setName] = useState('');
   const [call, setCall] = useState({});
   const [me, setMe] = useState('');
+  
+  const [conversations, setConversations] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [arrivalMessage, setArrivalMessage] = useState(null);
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -68,6 +73,10 @@ const ContextSocketProvider = ({ children }) => {
 
       peer.signal(signal);
     });
+    // socket.on('userNotOnline', (signal) => {
+    //   setCallAccepted(false);
+    //   setCallEnded(true);
+    // });
 
     connectionRef.current = peer;
   };
@@ -79,6 +88,34 @@ const ContextSocketProvider = ({ children }) => {
 
     window.location.reload();
   };
+
+  const setArrivalMessageFirst = () => {
+    socket.on("getMessage", (data) => {
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }
+
+  const addUser = (userId) => {
+    // console.log("userId on adding user:",userId );
+    socket.emit("addUser", userId);
+  }
+
+
+  const sendMessageEmit = ( props )=>{
+    socket.emit("sendMessage", {
+      senderId: props.senderId,
+      receiverId: props.receiverId,
+      text: props.text,
+    });
+  }
+
+
+
+
 
   return (
     <SocketContext.Provider value={{
@@ -94,6 +131,19 @@ const ContextSocketProvider = ({ children }) => {
       callUser,
       leaveCall,
       answerCall,
+      sendMessageEmit,
+      addUser, 
+      conversations, 
+      setConversations, 
+      currentChat, 
+      setCurrentChat, 
+      messages, 
+      setMessages, 
+      newMessage, 
+      setNewMessage, 
+      arrivalMessage, 
+      setArrivalMessage, 
+      setArrivalMessageFirst
     }}
     >
       {children}

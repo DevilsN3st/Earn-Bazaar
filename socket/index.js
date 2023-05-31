@@ -45,7 +45,15 @@ io.on("connection", (socket) => {
   socket.emit("me", socket.id);
   
 	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+    const userSocketId = getUser(userToCall);
+    // console.log("userSocketId:",userSocketId);
+    if( userSocketId === undefined ){
+      io.to(from).emit("userNotOnline");
+    }
+    else{
+      // console.log("user online");
+      io.to(userSocketId.socketId).emit("callUser", { signal: signalData, from, name });
+    }
 	});
 
 	socket.on("answerCall", (data) => {
