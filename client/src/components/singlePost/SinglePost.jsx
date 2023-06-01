@@ -11,6 +11,9 @@ import Button from "react-bootstrap/esm/Button";
 import "./singlePost.css";
 import DefaultMap from "../location/DefaultMap";
 
+import { v4 as uuidV4 } from "uuid";
+import CreatableSelect from "react-select/creatable";
+
 export default function SinglePost() {
   const location = useLocation();
   const path = location.pathname.split("/")[2];
@@ -26,16 +29,31 @@ export default function SinglePost() {
   const [desc, setDesc] = useState("");
   const [updateMode, setUpdateMode] = useState(false);
 
-  console.log(user);
-  console.log(post);
+  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  // console.log(user);
+  // console.log(post);
   useEffect(() => {
     const getPost = async () => {
       const res = await axiosBaseURL.get("/posts/" + path);
       setPost(res.data);
       setTitle(res.data.title);
       setDesc(res.data.desc);
+      setSelectedTags(res.data.tags);
+    };
+    const fetchTags = async () => {
+      const res = await axiosBaseURL.get("/tags");
+      const allTags = res.data;
+      // console.log("alltags", allTags);
+      const validTags = [];
+      allTags.forEach((item) =>
+        validTags.push({ id: item.tagId, label: item.name })
+      );
+      setAvailableTags(validTags);
     };
     getPost();
+    fetchTags();
   }, [path]);
 
   const handleDelete = async () => {
@@ -55,12 +73,19 @@ export default function SinglePost() {
         username: user.username,
         title,
         desc,
+        tags: selectedTags,
       });
       setUpdateMode(false);
     } catch (err) {
       console.log(err.response.data);
     }
   };
+
+  const onAddTag = (tag) => {
+    setAvailableTags((prev) => [...prev, tag]);
+    setSelectedTags((prev) => [...prev, tag]);
+  };
+
   return (
     <div className="singlePost">
       <Container className="singlePostWrapper">
@@ -111,6 +136,39 @@ export default function SinglePost() {
             {new Date(post.createdAt).toDateString()}
           </span>
         </div>
+        <div className="singlePostInfo">
+              <p>Tags</p>
+        {
+          updateMode
+          ? post?.tags &&
+            post?.tags.length > 0 && (
+              <CreatableSelect
+                onCreateOption={(label) => {
+                  const newTag = { id: uuidV4(), label };
+                  onAddTag(newTag);
+                }}
+                value={selectedTags?.map((tag) => {
+                  return { label: tag.label, value: tag.id };
+                })}
+                options={availableTags?.map((tag) => {
+                  return { label: tag.label, value: tag.id };
+                })}
+                onChange={(tags) => {
+                  setSelectedTags(
+                    tags?.map((tag) => {
+                      return { label: tag.label, id: tag.value };
+                    })
+                  );
+                }}
+                isMulti
+              />
+            )
+          : selectedTags &&
+            selectedTags.length > 0 &&
+            selectedTags.map((tag) => (
+              <span className="singlePostTag">{tag.label}</span>
+            ))}
+          </div>
         {updateMode ? (
           <textarea
             className="singlePostDescInput"
@@ -129,12 +187,15 @@ export default function SinglePost() {
           </Button>
         )}
         {post.coords && <DefaultMap coordinates={post.coords} />}
-        { post.brochure && (
-            <a href={PFpdf + post.brochure} target="_blank" rel="noopener noreferrer" download>
-          <Button>
-              Download Brochure
-          </Button>
-            </a>
+        {post.brochure && (
+          <a
+            href={PFpdf + post.brochure}
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+          >
+            <Button>Download Brochure</Button>
+          </a>
         )}
       </Container>
     </div>

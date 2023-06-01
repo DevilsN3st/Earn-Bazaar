@@ -8,6 +8,7 @@ const categoryRoute = require("./routes/categories");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const donationRoute = require("./routes/donation");
+const tagsRoute = require("./routes/tags");
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
@@ -33,6 +34,7 @@ app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/conversations", conversationRoute);
+app.use("/api/tags", tagsRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/donation", donationRoute);
 

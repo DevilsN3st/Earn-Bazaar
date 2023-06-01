@@ -28,6 +28,9 @@ const PostSchema = new mongoose.Schema(
     category: {
       type: String,
     },
+    tags: {
+      type: [Object],
+    },
     guest: {
       type: String,
     },

@@ -10,10 +10,18 @@ import axiosBaseURL, { writePost } from "../httpCommon";
 import DefaultMap from "../../components/location/DefaultMap";
 import Button from "react-bootstrap/esm/Button";
 
+import CreatableSelect from 'react-select/creatable';
+import makeAnimated from 'react-select/animated';
+import {v4 as uuidV4} from 'uuid'
+const animatedComponents = makeAnimated();
+
+
 export default function Write() {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
+  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [reward, setReward] = useState("");
   const [guest, setGuest] = useState("");
   const [desc, setDesc] = useState("");
@@ -34,6 +42,20 @@ export default function Write() {
     // console.log("write", coordinates)
   }, [navigator.geolocation]);
 
+  useEffect(() => {
+    const fetchTags = async () => {
+      const res = await axiosBaseURL.get("/tags");
+      const allTags = res.data;
+      // console.log("alltags", allTags);
+      const validTags = [];
+      allTags.forEach((item) =>
+        validTags.push({ id: item.tagId, label: item.name })
+      );
+      setAvailableTags(validTags);
+    }
+    fetchTags();
+  },[]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPost = {
@@ -45,7 +67,9 @@ export default function Write() {
       category,
       reward,
       guest,
+      tags:selectedTags,
     };
+    console.log(newPost)
     if( coordinates.latitude && coordinates.longitude ){
       newPost.coords = coordinates;
     }
@@ -74,12 +98,46 @@ export default function Write() {
       window.location.replace("/post/" + res.data._id);
     } catch (err) {}
   };
+
+  const onAddTag = (tag) => {
+
+    setAvailableTags(prev => [...prev, tag]);
+    setSelectedTags(prev => [...prev, tag]);
+    
+  }
+
+
   return (
     <div className="write">
       {fileImg && (
         <img className="writeImg" src={URL.createObjectURL(fileImg)} alt="" />
       )}
       <form className="writeForm" onSubmit={handleSubmit}>
+        <div className="writeFormGroup">
+
+            <CreatableSelect
+             onCreateOption={label => {
+              const newTag = { id: uuidV4(), label }
+              onAddTag(newTag)
+            }}
+            value={selectedTags.map(tag => {
+              return { label: tag.label, value: tag.id }
+            })}
+            options={availableTags.map(tag => {
+              return { label: tag.label, value: tag.id }
+            })}
+            onChange={tags => {
+              setSelectedTags(
+                tags.map(tag => {
+                  return { label: tag.label, id: tag.value }
+                })
+              )
+            }}
+            isMulti
+            />
+
+
+        </div>
         <div className="writeFormGroup">
           <label htmlFor="fileInput">
             <i className="writeIcon fas fa-plus"></i>
@@ -189,6 +247,7 @@ export default function Write() {
             onChange={(e) => setDesc(e.target.value)}
           ></textarea>
         </div>
+        
         <button className="writeSubmit" type="submit">
           Publish
         </button>

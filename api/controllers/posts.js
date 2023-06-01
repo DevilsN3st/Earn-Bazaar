@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const Tags = require("../models/Tags");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 
@@ -6,6 +7,26 @@ const createPost = async (req, res) => {
   try {
     const tempId = uuidv4();
     const newPost = new Post({ ...req.body, id: tempId, userId: req.userId });
+
+    console.log("writing post");
+
+    req.body.tags.forEach((tag) => {
+      Tags.findOne({ name: tag.label }).then((doc) => {
+        if (!doc) {
+          const newTag = new Tags({
+            name: tag.label,
+            tagId: tag.id,
+            postId: [tempId],
+          });
+          newTag.save();
+        } else {
+          doc.updateOne({ $push: { postId: tempId } }).then(() => {
+            console.log("updated");
+          });
+        }
+      });
+    })
+
     const savedPost = await newPost.save();
     return res.status(200).json(savedPost);
   } catch (err) {
@@ -31,6 +52,22 @@ const createPost = async (req, res) => {
           },
           { new: true }
         );
+        req.body.tags.forEach((tag) => {
+          Tags.findOne({ name: tag.label }).then((doc) => {
+            if (!doc) {
+              const newTag = new Tags({
+                name: tag.label,
+                tagId: tag.id,
+                postId: post.id,
+              });
+              newTag.save();
+            } else {
+              doc.updateOne({ $push: { postId: tempId } }).then(() => {
+                console.log("updated");
+              });
+            }
+          });
+        })
         return res.status(200).json(updatedPost);
       } catch (err) {
         return res.status(500).json(err);
