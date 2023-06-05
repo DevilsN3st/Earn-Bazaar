@@ -62,7 +62,7 @@ const getPostOfUser = async (req, res) => {
   try {
     const usernameOfUser = req.params.user;
     // console.log(usernameOfUser);
-    const profile = await User.find({ username: usernameOfUser.toString() });
+    const profile = await Post.find({ username: usernameOfUser.toString() });
     return res.status(200).json(profile);
   } catch (err) {
     return res.status(500).json(err);
