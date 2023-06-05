@@ -11,7 +11,7 @@ const VideoPlayer = () => {
     <Container>
       {stream && (
         <Container>
-          <Row xs={10}>
+          <Row xs={4}>
             <h1 className='display-6'>{name || 'Name'}</h1>
             <video playsInline muted ref={myVideo} autoPlay />
           </Row>

@@ -12,7 +12,7 @@ export default function Conversation({ conversation, currentUser }) {
 
     const getUser = async () => {
       try {
-        const res = await axiosBaseURL.get("/users?userId=" + friendId);
+        const res = await axiosBaseURL.get("/users/?userId=" + friendId);
         setUser(res.data);
       } catch (err) {
         console.log(err);

@@ -1,5 +1,6 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axiosBaseURL from "../../pages/httpCommon";
 import { Context } from "../../context/Context";
 import "./topbar.css";
 import logoUrl from "../assets/logo.svg";
@@ -11,13 +12,28 @@ import { LinkContainer } from "react-router-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import NotificationIcon from "../notifications/NotificationIcon";
 
 export default function TopBar() {
-  const { user, dispatch } = useContext(Context);
+  const { user, token, dispatch } = useContext(Context);
+  const [notifications, setNotifications] = useState([]);
   // const PF = `${process.env.REACT_APP_AXIOS_BASEURL}/images/` || "http://localhost:5000/images/";
+
+  useEffect(() => { 
+    const getNotifications = async () => {  
+      const res = await axiosBaseURL.get(`/notifications/${user._id}`);
+      setNotifications(res.data);
+
+    };
+    if(token !== null)getNotifications();
+  }, [token, user]);
+
+  console.log(notifications);
+  console.log(token);
 
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
+    console.log("logout")
   };
   return (
     <div className="top">
@@ -70,29 +86,40 @@ export default function TopBar() {
 
           <Nav className="topRight">
             {user && (
-              <NavDropdown
-                title={
-                    "Profile"
-                }
-                id="collasible-nav-dropdown"
-              >
-                <NavDropdown.Item>
-                  <Link to="/settings" className="txt-dec">
-                    <Avatar
-                      className="avatar"
-                      color={Avatar.getRandomColor("sitebase")}
-                      size="35"
-                      name={user.username}
-                      round={true}
-                    />{" "}
-                    {user.username}
-                  </Link>
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
-                  LOGOUT
-                </NavDropdown.Item>
-              </NavDropdown>
+              <>
+                <NavDropdown
+                  title={<NotificationIcon />}
+                  id="collasible-nav-dropdown"
+                >
+                  {notifications?.map((notification) => (
+                    <NavDropdown.Item key={notification._id} >
+                      received a messsage from {notification.userFrom} at {notification.updatedAt}
+                    </NavDropdown.Item>
+                  ))}
+                    <NavDropdown.Item >
+                      Clear notifications
+                    </NavDropdown.Item>
+                </NavDropdown>
+                
+                <NavDropdown title={"Profile"} id="collasible-nav-dropdown">
+                  <NavDropdown.Item>
+                    <Link to="/settings" className="txt-dec">
+                      <Avatar
+                        className="avatar"
+                        color={Avatar.getRandomColor("sitebase")}
+                        size="35"
+                        name={user.username}
+                        round={true}
+                      />{" "}
+                      {user.username}
+                    </Link>
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    LOGOUT
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>

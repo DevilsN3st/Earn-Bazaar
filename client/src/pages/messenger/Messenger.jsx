@@ -10,21 +10,48 @@ import { Context } from "../../context/Context";
 import { io } from "socket.io-client";
 import axiosBaseURL from "../httpCommon";
 
-import { SocketContext } from '../videoChat/Context';
-
+import { SocketContext } from "../videoChat/Context";
+import { Link } from "react-router-dom";
 
 export default function Messenger() {
-
   const { user } = useContext(Context);
-  const { sendMessageEmit, addUser, conversations, setConversations, currentChat, setCurrentChat, messages, setMessages, newMessage, setNewMessage, arrivalMessage, setArrivalMessageFirst } = useContext(SocketContext);
-  const scrollRef = useRef(); 
-  const [friendId, setFriendId] = useState(""); 
+  const {
+    sendMessageEmit,
+    addUser,
+    conversations,
+    setConversations,
+    currentChat,
+    setCurrentChat,
+    messages,
+    setMessages,
+    newMessage,
+    setNewMessage,
+    arrivalMessage,
+    setArrivalMessageFirst,
+    leaveCall,
+  } = useContext(SocketContext);
+  const scrollRef = useRef();
+  const [friendId, setFriendId] = useState("");
+  const [friend, setFriend] = useState({});
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const [callFriend, setCallFriend] = useState(false);
+
+  console.log(callFriend)
 
   useEffect(() => {
     setArrivalMessageFirst();
   }, []);
 
-  
+  useEffect(() => {
+    const getFriend = async () => {
+      const res = await axiosBaseURL.get(`/users/?userId=${friendId}`);
+      console.log(res);
+      setFriend(res.data);
+    };
+    getFriend();
+  }, [friendId]);
+
+  console.log("friend", friend);
   useEffect(() => {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sender) &&
@@ -33,11 +60,11 @@ export default function Messenger() {
 
   useEffect(() => {
     addUser(user._id);
-//     socket.current.on("getUsers", (users) => {
-//       setOnlineUsers(
-//         user.followings.filter((f) => users.some((u) => u.userId === f))
-//       );
-//     });
+    //     socket.current.on("getUsers", (users) => {
+    //       setOnlineUsers(
+    //         user.followings.filter((f) => users.some((u) => u.userId === f))
+    //       );
+    //     });
   }, [user]);
   // console.log(user?._id);
 
@@ -65,7 +92,7 @@ export default function Messenger() {
     };
     getMessages();
   }, [currentChat]);
-  
+
   // console.log(currentChat);
 
   const handleSubmit = async (e) => {
@@ -80,21 +107,25 @@ export default function Messenger() {
       (member) => member !== user._id
     );
 
-      const sendMessageProp = {
-        senderId: user._id,
-        receiverId: receiverId,
-        text: newMessage,
-      }
+    const sendMessageProp = {
+      senderId: user._id,
+      receiverId: receiverId,
+      text: newMessage,
+    };
 
-    sendMessageEmit(sendMessageProp );
+    sendMessageEmit(sendMessageProp);
 
     try {
       let firstUserId = user._id;
       let secondUserId = receiverId;
-      const exists1 = await axiosBaseURL.get(`/conversations/find/${firstUserId}/${secondUserId}`);
+      const exists1 = await axiosBaseURL.get(
+        `/conversations/find/${firstUserId}/${secondUserId}`
+      );
       firstUserId = receiverId;
       secondUserId = user._id;
-      const exists2 = await axiosBaseURL.get(`/conversations/find/${secondUserId}/${firstUserId}`);
+      const exists2 = await axiosBaseURL.get(
+        `/conversations/find/${secondUserId}/${firstUserId}`
+      );
       message.conversationId = exists1.data || exists2.data;
       // console.log(message);
       const res = await axiosBaseURL.post("/messages", message);
@@ -109,26 +140,30 @@ export default function Messenger() {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSearch = (e) =>{
+  const handleSearch = (e) => {};
 
-  }
-
-  const handleConversations = (e,c) =>{
+  const handleConversations = (e, c) => {
     setCurrentChat(c);
     const friendUserId = c.members.find((m) => m !== user._id);
     setFriendId(friendUserId);
-  }
+  };
   // console.log(user);
+  // console.log(conversations);
+  // console.log(messages);
+  console.log(currentChat);
 
   return (
     <>
       <div className="messenger">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
-            <input placeholder="Search for friends" className="chatMenuInput" onChange={e=>handleSearch(e)}/>
+            <input
+              placeholder="Search for friends"
+              className="chatMenuInput"
+              onChange={(e) => handleSearch(e)}
+            />
             {conversations?.map((c) => (
-              
-              <div onClick={(e)=>handleConversations(e,c)}>
+              <div onClick={(e) => handleConversations(e, c)}>
                 <Conversation conversation={c} currentUser={user} />
               </div>
             ))}
@@ -139,6 +174,36 @@ export default function Messenger() {
             {currentChat ? (
               <>
                 <div className="chatBoxTop">
+                  <div className="conversation">
+                    <img
+                      className="conversationImg"
+                      src={
+                        user?.profilePicture
+                          ? PF + user.profilePicture
+                          : PF + "person/noAvatar.png"
+                      }
+                      alt=""
+                    />
+                    <Link to={`/profile/${user.username}`}>
+                      <span className="conversationName">
+                        {friend?.username} 
+                      </span>
+                    </Link>
+                    {
+                      callFriend===false ? (
+
+                        <button onClick={() => setCallFriend(true)}> Call </button>
+                        ):(
+                        <button onClick={() => {
+                          setCallFriend(false)
+                          leaveCall()
+                        }}> End Call </button>
+
+                      )
+                    }
+                  </div>
+                </div>
+                <div className="chatBoxMiddle">
                   {messages?.map((m) => (
                     <div ref={scrollRef}>
                       <Message message={m} own={m.sender === user._id} />
@@ -164,16 +229,22 @@ export default function Messenger() {
             )}
           </div>
         </div>
-        <div className="chatOnline">
+        {(callFriend===false) ? (
+          <></>
+        ) : (
+          <div className="chatOnline">
+            <VideoChat friendId={friendId} userName={user?.username} />
+          </div>
+        )}
+        {/* <div className="chatOnline">
           <div className="chatOnlineWrapper">
-            <VideoChat friendId={friendId} userName={user?.username}/>
-            {/* <ChatOnline
+            <ChatOnline
               onlineUsers={onlineUsers}
               currentId={user._id}
               setCurrentChat={setCurrentChat}
-            /> */}
+            /> 
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

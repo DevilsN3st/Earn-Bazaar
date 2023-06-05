@@ -26,9 +26,10 @@ const Profile = ({ username }) => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await axiosBaseURL.get("/users/profile/" + path);
+      const res = await axiosBaseURL.get(`/users/?username=${path}`);
+      // console.log(res);
       const userDetails = res.data;
-      setOtherUser(userDetails[0]);
+      setOtherUser(userDetails);
     };
     fetchPosts();
   }, [path]);
@@ -97,7 +98,7 @@ const Profile = ({ username }) => {
               <MDBCardText>All other details.. User's Bio</MDBCardText>
             </MDBCardBody>
             <MDBCardTitle> Author's Posts: </MDBCardTitle>
-            <Link to={`/?user=${otherUser.username}`} className="link">
+            <Link to={`/?user=${otherUser?.username}`} className="link">
               <b> View all Posts</b>
             </Link>
           </MDBCardBody>

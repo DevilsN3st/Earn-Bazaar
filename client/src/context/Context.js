@@ -15,16 +15,14 @@ export const ContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, INITIAL_STATE);
 
   useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(state.user));
+    localStorage.setItem("token", JSON.stringify(state.token));
     axiosBaseURL.interceptors.request.use((req) => {
-      if (localStorage.getItem("token")) {
         req.headers.Authorization = `Bearer ${JSON.parse(
           localStorage.getItem("token")
         )}`;
-      }
-      return req;
+    return req;
     });
-    localStorage.setItem("user", JSON.stringify(state.user));
-    localStorage.setItem("token", JSON.stringify(state.token));
   }, [state.user, state.token]);
 
   return (

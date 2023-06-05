@@ -26,13 +26,13 @@ const Sidebar = ({ userName, friendId }) => {
         <form noValidate autoComplete="off">
           <Row container >
             <Row item xs={1} md={1} >
-              <h1 className='display-6' >Account Info</h1>
-              <CopyToClipboard text={me} >
+              <h1 className='display-6' >{userName}
+              </h1>
+              {/* <CopyToClipboard text={me} >
                 <Button variant="primary" >
                   Copy Your ID
                 </Button>
-              </CopyToClipboard>
-              {userName}
+              </CopyToClipboard> */}
             </Row>
             <Row item xs={1} md={1} >
               <h1 className='display-6' >Make a call</h1>
