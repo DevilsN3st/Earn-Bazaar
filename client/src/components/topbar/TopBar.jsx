@@ -19,22 +19,25 @@ export default function TopBar() {
   const [notifications, setNotifications] = useState([]);
   // const PF = `${process.env.REACT_APP_AXIOS_BASEURL}/images/` || "http://localhost:5000/images/";
 
-  useEffect(() => { 
-    const getNotifications = async () => {  
+  useEffect(() => {
+    const getNotifications = async () => {
       const res = await axiosBaseURL.get(`/notifications/${user._id}`);
       setNotifications(res.data);
-
     };
-    if(token !== null)getNotifications();
+    if (token !== null) getNotifications();
   }, [token, user]);
 
-  console.log(notifications);
-  console.log(token);
 
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
-    console.log("logout")
+    console.log("logout");
   };
+
+  const clearNotification = async () => {
+    const res = await axiosBaseURL.delete(`/notifications/${user._id}`);
+    setNotifications(res.data);
+  };
+
   return (
     <div className="top">
       <Navbar
@@ -92,15 +95,21 @@ export default function TopBar() {
                   id="collasible-nav-dropdown"
                 >
                   {notifications?.map((notification) => (
-                    <NavDropdown.Item key={notification._id} >
-                      received a messsage from {notification.userFrom} at {notification.updatedAt}
+                    <NavDropdown.Item key={notification._id}>
+                      <LinkContainer to="/messenger">
+                        <Nav.Link className="txt-dec">
+                          received a messsage from{" "}
+                          {notification.userFrom.username} at{" "}
+                          {notification.updatedAt}
+                        </Nav.Link>
+                      </LinkContainer>
                     </NavDropdown.Item>
                   ))}
-                    <NavDropdown.Item >
-                      Clear notifications
-                    </NavDropdown.Item>
+                  <NavDropdown.Item onClick={clearNotification}>
+                    Clear notifications
+                  </NavDropdown.Item>
                 </NavDropdown>
-                
+
                 <NavDropdown title={"Profile"} id="collasible-nav-dropdown">
                   <NavDropdown.Item>
                     <Link to="/settings" className="txt-dec">

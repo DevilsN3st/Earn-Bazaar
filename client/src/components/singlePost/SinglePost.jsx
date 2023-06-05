@@ -33,7 +33,7 @@ export default function SinglePost() {
   const [selectedTags, setSelectedTags] = useState([]);
 
   // console.log(user);
-  // console.log(post);
+  console.log(post);
   useEffect(() => {
     const getPost = async () => {
       const res = await axiosBaseURL.get("/posts/" + path);
@@ -80,7 +80,7 @@ export default function SinglePost() {
       console.log(err.response.data);
     }
   };
-
+  console.log(selectedTags)
   const onAddTag = (tag) => {
     setAvailableTags((prev) => [...prev, tag]);
     setSelectedTags((prev) => [...prev, tag]);
@@ -103,7 +103,7 @@ export default function SinglePost() {
         ) : (
           <h1 className="singlePostTitle">
             {title}
-            {post.username === user?.username && (
+            {post?.author?.username === user?.username && (
               <div className="singlePostEdit">
                 <i
                   className="singlePostIcon far fa-edit"
@@ -124,11 +124,11 @@ export default function SinglePost() {
         <div className="singlePostInfo">
           <span className="singlePostAuthor">
             Author:
-            {user?.username === post.username ? (
+            {user?.username === post?.author?.username ? (
               <Link to="/settings">My Profile</Link>
             ) : (
-              <Link to={`/profile/${post.username}`} className="link">
-                <b> {post.username}</b>
+              <Link to={`/profile/${post?.author?.username}`} className="link">
+                <b> {post?.author?.username}</b>
               </Link>
             )}
           </span>
@@ -166,7 +166,7 @@ export default function SinglePost() {
           : selectedTags &&
             selectedTags.length > 0 &&
             selectedTags.map((tag) => (
-              <span className="singlePostTag">{tag.label}</span>
+              <span key={tag.id} className="singlePostTag">{tag.label}</span>
             ))}
           </div>
         {updateMode ? (

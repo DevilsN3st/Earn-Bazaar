@@ -2,8 +2,8 @@ const router = require("express").Router();
 
 const { addTag, getTag } = require("../controllers/tags");  
 
-router.post("/", );
+router.post("/", addTag);
 
-router.get("/", );
+router.get("/", getTag);
 
 module.exports = router;

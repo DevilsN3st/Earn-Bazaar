@@ -7,10 +7,10 @@ const addNewNotification = async (req, res) => {
       chatRoomId: chatRoomId,
     });
 
-    const newNotification = new Notification ({
+    const newNotification = new Notification({
       userFrom,
       userTo,
-      chatRoomId
+      chatRoomId,
     });
     newNotification.save();
   } catch (err) {
@@ -36,7 +36,16 @@ const getNotification = async (req, res) => {
     console.log("getNotification");
     const notificationItem = await Notification.find({
       userTo: req.params.notificationId,
-    }).sort({ createdAt: -1 })
+    })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "userFrom",
+        select: "username _id",
+      })
+      .populate({
+        path: "userTo",
+        select: "username _id",
+      });
     res.status(200).json(notificationItem);
   } catch (err) {
     res.status(500);

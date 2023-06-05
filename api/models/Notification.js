@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
   userFrom: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   userTo: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   latestNotification:{
@@ -14,7 +16,8 @@ const notificationSchema = new mongoose.Schema({
     default: Date.now(),
   },
   chatRoomId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation',
     required: true,
   },
 },{ timestamps: true });

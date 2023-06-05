@@ -40,20 +40,12 @@ const PostSchema = new mongoose.Schema(
     brochure: {
       type: String,
     },
-    username: {
-      type: String,
-      required: true,
-    },
     categories: {
       type: Array,
     },
-    userCategory:{
-      type: String,
-      required: true,
-    },
-    userId:{
-      type: String,
-      required: true,
+    author:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     }
 
   },

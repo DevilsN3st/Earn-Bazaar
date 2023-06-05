@@ -9,6 +9,7 @@ import Advertisment from "../../components/advertisments/Advertisment";
 import { Link } from "react-router-dom";
 
 import Select from "react-select";
+import { Button } from "react-bootstrap";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -112,7 +113,10 @@ export default function Home() {
         }}
       />
       {/* if( search.params.id ) */}
-      <Link to="/donate">Donate Us</Link>
+      <br />
+      <Link to="/donate">
+        <Button variant="primary">Donate Us</Button>
+        </Link>
       <div className="home">
         <Posts posts={posts} />
       </div>

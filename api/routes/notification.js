@@ -6,7 +6,7 @@ const {
 } = require("../controllers/notification");
 const auth = require("../middleware/auth");
 
-router.get("/:notificationId", auth, getNotification);
+router.get("/:notificationId", getNotification);
 router.post("/", auth, addNewNotification)
 router.delete("/:notificationId", auth, deleteNotification);
 
