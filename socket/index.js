@@ -42,6 +42,13 @@ io.on("connection", (socket) => {
   });
 
 
+  socket.on("typing", (props) => {
+    socket.emit("typing", {
+      senderId: props.receiverId,
+      receiverId : props.senderId,
+    });
+  });
+
   socket.emit("me", socket.id);
   
 	socket.on("callUser", ({ userToCall, signalData, from, name }) => {

@@ -20,6 +20,8 @@ const ContextSocketProvider = ({ children }) => {
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
+  const [friendTypingStatus, setFriendTypingStatus] = useState(false);
+
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
@@ -112,9 +114,20 @@ const ContextSocketProvider = ({ children }) => {
       text: props.text,
     });
   }
+  
+  const sendTypingUpdate = (props) => {
+    socket.emit("typing", {
+      senderId: props.senderId,
+      receiverId: props.receiverId,
+      text: "typing",
+    })
+  }
 
-
-
+  const showTyping = () => {
+    socket.on("typing", (data) => {
+      setFriendTypingStatus(true);
+    })
+  }
 
 
   return (
@@ -143,7 +156,10 @@ const ContextSocketProvider = ({ children }) => {
       setNewMessage, 
       arrivalMessage, 
       setArrivalMessage, 
-      setArrivalMessageFirst
+      setArrivalMessageFirst,
+      sendTypingUpdate,
+      friendTypingStatus,
+      showTyping,
     }}
     >
       {children}

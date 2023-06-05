@@ -29,12 +29,15 @@ export default function Messenger() {
     arrivalMessage,
     setArrivalMessageFirst,
     leaveCall,
+    sendTypingUpdate,
+    friendTypingStatus,
   } = useContext(SocketContext);
   const scrollRef = useRef();
   const [friendId, setFriendId] = useState("");
   const [friend, setFriend] = useState({});
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [callFriend, setCallFriend] = useState(false);
+  const [showTyping, setShowTyping] = useState(false);
 
   console.log(callFriend)
 
@@ -147,6 +150,25 @@ export default function Messenger() {
     const friendUserId = c.members.find((m) => m !== user._id);
     setFriendId(friendUserId);
   };
+
+  useEffect(() => { 
+    if( newMessage !== "" ){
+      const receiverId = currentChat.members.find(
+        (member) => member !== user._id
+      )
+      const typingProp = {
+        senderId: user._id,
+        receiverId: receiverId,
+      }
+      sendTypingUpdate(typingProp)
+    }
+  }, [newMessage])
+
+  useEffect(() => { 
+    setShowTyping(friendTypingStatus);
+  }, [friendTypingStatus, friendId])
+
+
   // console.log(user);
   // console.log(conversations);
   // console.log(messages);
@@ -210,6 +232,7 @@ export default function Messenger() {
                     </div>
                   ))}
                 </div>
+                  {showTyping && ( <p>Typing...</p>   )}
                 <div className="chatBoxBottom">
                   <textarea
                     className="chatMessageInput"
