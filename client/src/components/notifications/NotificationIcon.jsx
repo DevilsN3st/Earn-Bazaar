@@ -1,10 +1,11 @@
 import NotificationBadge, { Effect } from "react-notification-badge";
-import { IoSearch, IoNotificationsSharp, IoCaretDown } from "react-icons/io5";
+import { IoNotificationsSharp,  } from "react-icons/io5";
 
-const NotificationIcon = () => {
+const NotificationIcon = ({notificationCount}) => {
+  
   return (
     <>
-      <NotificationBadge count={0} effect={2} />
+      <NotificationBadge count={notificationCount} effect={Effect.SCALE} />
       <IoNotificationsSharp color="white" />
     </>
   );

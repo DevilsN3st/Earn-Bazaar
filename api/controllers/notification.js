@@ -24,6 +24,7 @@ const deleteNotification = async (req, res) => {
     var newNotification = await Notification.findOneAndDelete({
       userTo: req.userId,
     });
+    console.log("deleted")
     res.status(202).json(newNotification);
   } catch (err) {
     res.status(500);

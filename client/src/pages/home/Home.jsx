@@ -10,6 +10,9 @@ import { Link } from "react-router-dom";
 
 import Select from "react-select";
 import { Button } from "react-bootstrap";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -63,7 +66,7 @@ export default function Home() {
 
   // console.log("avail",availableTags);
   // console.log("sel",selectedTags);
-  
+
   useEffect(() => {
     const validPost = posts;
     if (selectedTags.length > 0) {
@@ -92,34 +95,42 @@ export default function Home() {
   return (
     <>
       <Header />
-      <Select
-        defaultValue={[]}
-        isMulti
-        name="colors"
-        options={availableTags.map((tag) => {
-          return { label: tag.label, value: tag.id };
-        })}
-        value={selectedTags.map((tag) => {
-          return { label: tag.label, value: tag.id };
-        })}
-        className="basic-multi-select"
-        classNamePrefix="select"
-        onChange={(tags) => {
-          setSelectedTags(
-            tags.map((tag) => {
-              return { label: tag.label, id: tag.value };
-            })
-          );
-        }}
-      />
-      {/* if( search.params.id ) */}
-      <br />
-      <Link to="/donate">
-        <Button variant="primary">Donate Us</Button>
-        </Link>
-      <div className="home">
-        <Posts posts={posts} />
-      </div>
+      <Container direction="horizontal" >
+        <Row>
+          <Col xs md={3} className="border-right border-dark mt-4" >
+            <Select
+              defaultValue={[]}
+              isMulti
+              name="colors"
+              options={availableTags.map((tag) => {
+                return { label: tag.label, value: tag.id };
+              })}
+              value={selectedTags.map((tag) => {
+                return { label: tag.label, value: tag.id };
+              })}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={(tags) => {
+                setSelectedTags(
+                  tags.map((tag) => {
+                    return { label: tag.label, id: tag.value };
+                  })
+                );
+              }}
+            />
+            {/* if( search.params.id ) */}
+            <br />
+            <Link to="/donate">
+              <Button variant="success">Donate Us</Button>
+            </Link>
+          </Col>
+          <Col>
+          <div className="home">
+            <Posts posts={posts} />
+          </div>
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 }

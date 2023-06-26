@@ -10,6 +10,8 @@ import { Context } from "../../context/Context";
 import { io } from "socket.io-client";
 import axiosBaseURL from "../httpCommon";
 
+import { Container, Row, Col, Button } from "react-bootstrap";
+
 import { SocketContext } from "../videoChat/Context";
 import { Link } from "react-router-dom";
 
@@ -196,34 +198,40 @@ export default function Messenger() {
             {currentChat ? (
               <>
                 <div className="chatBoxTop">
-                  <div className="conversation">
+                  <Container className="conversation">
+                    <Col xl={2}>
                     <img
                       className="conversationImg"
                       src={
                         user?.profilePicture
-                          ? PF + user.profilePicture
-                          : PF + "person/noAvatar.png"
+                        ? PF + user.profilePicture
+                        : PF + "person/noAvatar.png"
                       }
                       alt=""
-                    />
+                      />
+                        </Col>
+                      <Col xs={9}>
                     <Link to={`/profile/${user.username}`}>
                       <span className="conversationName">
                         {friend?.username} 
                       </span>
                     </Link>
+                      </Col>
+                      <Col>
                     {
                       callFriend===false ? (
-
-                        <button onClick={() => setCallFriend(true)}> Call </button>
+                        
+                        <Button variant="success" onClick={() => setCallFriend(true)}> Call </Button>
                         ):(
-                        <button onClick={() => {
-                          setCallFriend(false)
-                          leaveCall()
-                        }}> End Call </button>
-
-                      )
-                    }
-                  </div>
+                          <Button varian="danger" onClick={() => {
+                            setCallFriend(false)
+                            leaveCall()
+                          }}> End Call </Button>
+                          
+                          )
+                        }
+                        </Col>
+                  </Container>
                 </div>
                 <div className="chatBoxMiddle">
                   {messages?.map((m) => (

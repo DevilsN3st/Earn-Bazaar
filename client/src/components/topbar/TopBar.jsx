@@ -46,10 +46,10 @@ export default function TopBar() {
         expand="sm"
         bg="dark"
         variant="dark"
-        className="nav-sm"
+        className="nav-sm p-2"
         height="30"
       >
-        <LinkContainer to="/">
+        <LinkContainer to="/" >
           <Navbar.Brand>
             EarnBazaar
             <img
@@ -91,10 +91,10 @@ export default function TopBar() {
             {user && (
               <>
                 <NavDropdown
-                  title={<NotificationIcon />}
+                  title={<NotificationIcon notificationCount={notifications.length}/>}
                   id="collasible-nav-dropdown"
                 >
-                  {notifications?.map((notification) => (
+                  {notifications.length > 0 && notifications?.map((notification) => (
                     <NavDropdown.Item key={notification._id}>
                       <LinkContainer to="/messenger">
                         <Nav.Link className="txt-dec">

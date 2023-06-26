@@ -64,6 +64,12 @@ const login = async (req, res) => {
 }
 
 
+const recoverPassword = async ( req, res ) => {
+
+
+  
+}
+
 
 
 

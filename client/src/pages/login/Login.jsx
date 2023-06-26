@@ -49,6 +49,11 @@ export default function Login() {
           Login
         </button>
       </form>
+      {/* <button className=" btn btn-outline-secondary btn-lg">
+        <Link className="rm-txt-dec" to="/forgot-password">
+          Recover your password
+        </Link>
+      </button> */}
       <button className="loginRegisterButton btn btn-outline-secondary btn-lg">
         <Link className="rm-txt-dec" to="/register">
           Register
