@@ -32,6 +32,7 @@ export default function Messenger() {
     setArrivalMessageFirst,
     leaveCall,
     sendTypingUpdate,
+    sendStopTypingUpdate,
     friendTypingStatus,
   } = useContext(SocketContext);
   const scrollRef = useRef();
@@ -40,6 +41,7 @@ export default function Messenger() {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [callFriend, setCallFriend] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
+  const [lastTypingTime, setLastTypingTime] = useState( new Date().getTime() );
 
   console.log(callFriend)
 
@@ -154,23 +156,33 @@ export default function Messenger() {
   };
 
   useEffect(() => { 
+    var timerLength = 3000;
+    const receiverId = currentChat?.members.find(
+      (member) => member !== user._id
+    )
+    const typingProp = {
+      senderId: user._id,
+      receiverId: receiverId,
+    }
     if( newMessage !== "" ){
-      const receiverId = currentChat.members.find(
-        (member) => member !== user._id
-      )
-      const typingProp = {
-        senderId: user._id,
-        receiverId: receiverId,
-      }
+      setLastTypingTime( new Date().getTime() );
       sendTypingUpdate(typingProp)
+    }
+    else{
+      setTimeout(()=>{
+        var timeNow = new Date().getTime();
+        if( timeNow - lastTypingTime >= timerLength )
+          sendStopTypingUpdate(typingProp);
+      }, timerLength)
     }
   }, [newMessage])
 
   useEffect(() => { 
+    console.log("updating typing status");
     setShowTyping(friendTypingStatus);
   }, [friendTypingStatus, friendId])
 
-
+  console.log("friend typing status", friendTypingStatus);
   // console.log(user);
   // console.log(conversations);
   // console.log(messages);

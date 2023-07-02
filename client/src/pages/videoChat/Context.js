@@ -131,11 +131,20 @@ const ContextSocketProvider = ({ children }) => {
       receiverId: props.receiverId,
       text: "typing",
     })
-  }
-
-  const showTyping = () => {
     socket.on("typing", (data) => {
+      console.log("show typing");
       setFriendTypingStatus(true);
+    })
+  }
+  const sendStopTypingUpdate = (props) => {
+    socket.emit("stopTyping", {
+      senderId: props.senderId,
+      receiverId: props.receiverId,
+      text: "stop Typing",
+    })
+    socket.on("stopTyping", (data) =>{
+      console.log("stop typing");
+      setFriendTypingStatus(false);
     })
   }
 
@@ -171,8 +180,8 @@ const ContextSocketProvider = ({ children }) => {
       setArrivalNotification, 
       setArrivalNotificationFirst,
       sendTypingUpdate,
+      sendStopTypingUpdate,
       friendTypingStatus,
-      showTyping,
     }}
     >
       {children}

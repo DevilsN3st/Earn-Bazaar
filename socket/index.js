@@ -1,4 +1,4 @@
-const io = require("socket.io")(process.env.PORT || 8900, {
+const io = require("socket.io")( process.env.PORT || 8900, {
   cors: {
     origin: process.env.ORIGIN,
   },
@@ -47,7 +47,18 @@ io.on("connection", (socket) => {
 
 
   socket.on("typing", (props) => {
-    socket.emit("typing", {
+    addUser(props.receiverId, socket.id);
+    // console.log(props);
+    const user = getUser(props.receiverId);
+    io.to(user.socketId).emit("typing", {
+      senderId: props.receiverId,
+      receiverId : props.senderId,
+    });
+  });
+  socket.on("stopTyping", (props) => {
+    addUser(props.receiverId, socket.id);
+    const user = getUser(props.receiverId);
+    io.to(user.socketId).emit("stopTyping", {
       senderId: props.receiverId,
       receiverId : props.senderId,
     });
