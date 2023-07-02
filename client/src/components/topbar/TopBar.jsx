@@ -13,10 +13,16 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import NotificationIcon from "../notifications/NotificationIcon";
+import { SocketContext } from "../../pages/videoChat/Context";
 
 export default function TopBar() {
   const { user, token, dispatch } = useContext(Context);
   const [notifications, setNotifications] = useState([]);
+
+  const { arrivalNotification, 
+    setArrivalNotificationFirst,
+  } = useContext(SocketContext);
+
   // const PF = `${process.env.REACT_APP_AXIOS_BASEURL}/images/` || "http://localhost:5000/images/";
 
   useEffect(() => {
@@ -25,7 +31,24 @@ export default function TopBar() {
       setNotifications(res.data);
     };
     if (token !== null) getNotifications();
+    setArrivalNotificationFirst();
   }, [token, user]);
+
+  useEffect(() => {
+    const getFriend = async () => {
+      const userData = await axiosBaseURL.get(`/users/?userId=${arrivalNotification?.userFrom}`);
+      const userNotification = {
+        userFrom:{
+          userName: userData?.userName,
+          userId: userData?.userId,
+        },
+        updatedAt: arrivalNotification?.createdAt,
+      }
+    
+      setNotifications((prev) => [...prev, userNotification ]);
+    };
+    if( arrivalNotification ) getFriend();
+  },[arrivalNotification])
 
 
   const handleLogout = () => {
@@ -37,6 +60,7 @@ export default function TopBar() {
     const res = await axiosBaseURL.delete(`/notifications/${user._id}`);
     setNotifications(res.data);
   };
+  console.log(user);
 
   return (
     <div className="top">
@@ -49,7 +73,7 @@ export default function TopBar() {
         className="nav-sm p-2"
         height="30"
       >
-        <LinkContainer to="/" >
+        <LinkContainer to="/">
           <Navbar.Brand>
             EarnBazaar
             <img
@@ -67,9 +91,11 @@ export default function TopBar() {
             <LinkContainer to="/home">
               <Nav.Link className="topListItem">HOME</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/write">
-              <Nav.Link className="topListItem">WRITE</Nav.Link>
-            </LinkContainer>
+            {user && user.userCategory === "Organiser" && (
+              <LinkContainer to="/write">
+                <Nav.Link className="topListItem">WRITE</Nav.Link>
+              </LinkContainer>
+            )}
             {!user && (
               <LinkContainer to="/login">
                 <Nav.Link className="topListItem">LOGIN</Nav.Link>
@@ -91,20 +117,25 @@ export default function TopBar() {
             {user && (
               <>
                 <NavDropdown
-                  title={<NotificationIcon notificationCount={notifications.length}/>}
+                  title={
+                    <NotificationIcon
+                      notificationCount={notifications.length}
+                    />
+                  }
                   id="collasible-nav-dropdown"
                 >
-                  {notifications.length > 0 && notifications?.map((notification) => (
-                    <NavDropdown.Item key={notification._id}>
-                      <LinkContainer to="/messenger">
-                        <Nav.Link className="txt-dec">
-                          received a messsage from{" "}
-                          {notification.userFrom.username} at{" "}
-                          {notification.updatedAt}
-                        </Nav.Link>
-                      </LinkContainer>
-                    </NavDropdown.Item>
-                  ))}
+                  {notifications.length > 0 &&
+                    notifications?.map((notification) => (
+                      <NavDropdown.Item key={notification._id}>
+                        <LinkContainer to="/messenger">
+                          <Nav.Link className="txt-dec">
+                            received a messsage from{" "}
+                            {notification.userFrom.username} at{" "}
+                            {notification.updatedAt}
+                          </Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown.Item>
+                    ))}
                   <NavDropdown.Item onClick={clearNotification}>
                     Clear notifications
                   </NavDropdown.Item>

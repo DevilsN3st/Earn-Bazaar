@@ -19,6 +19,7 @@ const ContextSocketProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
+  const [arrivalNotification, setArrivalNotification] = useState(null);
 
   const [friendTypingStatus, setFriendTypingStatus] = useState(false);
 
@@ -100,6 +101,15 @@ const ContextSocketProvider = ({ children }) => {
       });
     });
   }
+  const setArrivalNotificationFirst = () => {
+    socket.on("getNotification", (data) => {
+      setArrivalNotification({
+        userFrom: data.senderId,
+        userTo: data.receiverId,
+        createdAt: Date.now(),
+      });
+    });
+  }
 
   const addUser = (userId) => {
     // console.log("userId on adding user:",userId );
@@ -157,6 +167,9 @@ const ContextSocketProvider = ({ children }) => {
       arrivalMessage, 
       setArrivalMessage, 
       setArrivalMessageFirst,
+      arrivalNotification, 
+      setArrivalNotification, 
+      setArrivalNotificationFirst,
       sendTypingUpdate,
       friendTypingStatus,
       showTyping,

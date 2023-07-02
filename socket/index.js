@@ -39,6 +39,10 @@ io.on("connection", (socket) => {
       senderId,
       text,
     });
+    io.to(user.socketId).emit("getNotification", {
+      receiverId: senderId, 
+      senderId: receiverId
+    })
   });
 
 
