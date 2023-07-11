@@ -67,9 +67,9 @@ console.log("advertismentList", advertismentList);
           <h1 className="display-4">Advertise Your post in Your Local Area.</h1>
           <p className="lead">View All the Advertisments here.</p>
           {/* <hr className="my-4" /> */}
-          <Link to="/post-advertisment">
+          {user && <Link to="/post-advertisment">
               <Button variant="primary">Post Advertisment</Button>
-            </Link>
+            </Link>}
           <hr className="my-4" />
             
           {/* </div> */}
