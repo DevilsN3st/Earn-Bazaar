@@ -15,6 +15,8 @@ import Cancel from "./pages/paymentResult/Cancel";
 import Success from "./pages/paymentResult/Success";
 import Donation from "./pages/donation/Donation";
 import VideoChat from "./pages/videoChat/VideoChat";
+import PostAdvertisment from "./pages/postAdvertisment/PostAdvertisment";
+import Advertisments from "./pages/advertisments/Advertisments";
 // import Rightbar from "./components/rightbar/Rightbar";
 
 function App() {
@@ -37,6 +39,8 @@ function App() {
         <Route path="/cancel" element={<Cancel />} />
         <Route path="/donate" element={<Donation />} />
         <Route path="/videochat" element={<VideoChat />} />
+        <Route path="/post-advertisment" element={<PostAdvertisment/>} />
+        <Route path="/advertisments" element={<Advertisments/>} />
       </Routes>
     </BrowserRouter>
   );

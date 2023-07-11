@@ -9,6 +9,8 @@ const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const donationRoute = require("./routes/donation");
 const notificationRoute = require("./routes/notification");
+const advertismentRoute = require("./routes/advertisment");
+const locationRoute = require("./routes/location");
 const tagsRoute = require("./routes/tags");
 const multer = require("multer");
 const path = require("path");
@@ -39,6 +41,8 @@ app.use("/api/tags", tagsRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/donation", donationRoute);
 app.use("/api/notifications", notificationRoute);
+app.use("/api/advertisment", advertismentRoute);
+app.use("/api/location", locationRoute);
 
 
 app.listen(process.env.PORT || "5000", () => {

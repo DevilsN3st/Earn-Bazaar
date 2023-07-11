@@ -95,9 +95,9 @@ export default function Home() {
   return (
     <>
       <Header />
-      <Container direction="horizontal" >
+      <Container direction="horizontal">
         <Row>
-          <Col xs md={3} className="border-right border-dark mt-4" >
+          <Col xs md={3} className="border-right border-dark mt-4">
             <Select
               defaultValue={[]}
               isMulti
@@ -120,14 +120,31 @@ export default function Home() {
             />
             {/* if( search.params.id ) */}
             <br />
-            <Link to="/donate">
-              <Button variant="success">Donate Us</Button>
-            </Link>
+            <div>
+              <Link to="/donate" className="mt-2">
+                <Button variant="success">Donate Us</Button>
+              </Link>
+            </div>
+            <br />
+            <br />
+            <br />
+            <div>
+              <Link to="/advertisments">
+                <Button variant="secondary">Events </Button>
+              </Link>
+            </div>
+            <br />
+            {user && user.userCategory==="Organiser" && <div>
+              <Link to="/post-advertisment">
+                <Button variant="warning">Advertise Your Event</Button>
+              </Link>
+            </div>}
+            <br />
           </Col>
           <Col>
-          <div className="home">
-            <Posts posts={posts} />
-          </div>
+            <div className="home">
+              <Posts posts={posts} />
+            </div>
           </Col>
         </Row>
       </Container>

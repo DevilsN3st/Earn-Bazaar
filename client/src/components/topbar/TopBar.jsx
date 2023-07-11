@@ -19,9 +19,8 @@ export default function TopBar() {
   const { user, token, dispatch } = useContext(Context);
   const [notifications, setNotifications] = useState([]);
 
-  const { arrivalNotification, 
-    setArrivalNotificationFirst,
-  } = useContext(SocketContext);
+  const { arrivalNotification, setArrivalNotificationFirst } =
+    useContext(SocketContext);
 
   // const PF = `${process.env.REACT_APP_AXIOS_BASEURL}/images/` || "http://localhost:5000/images/";
 
@@ -36,20 +35,21 @@ export default function TopBar() {
 
   useEffect(() => {
     const getFriend = async () => {
-      const userData = await axiosBaseURL.get(`/users/?userId=${arrivalNotification?.userFrom}`);
+      const userData = await axiosBaseURL.get(
+        `/users/?userId=${arrivalNotification?.userFrom}`
+      );
       const userNotification = {
-        userFrom:{
+        userFrom: {
           userName: userData?.userName,
           userId: userData?.userId,
         },
         updatedAt: arrivalNotification?.createdAt,
-      }
-    
-      setNotifications((prev) => [...prev, userNotification ]);
-    };
-    if( arrivalNotification ) getFriend();
-  },[arrivalNotification])
+      };
 
+      setNotifications((prev) => [...prev, userNotification]);
+    };
+    if (arrivalNotification) getFriend();
+  }, [arrivalNotification]);
 
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
@@ -93,22 +93,25 @@ export default function TopBar() {
             </LinkContainer>
             {user && user.userCategory === "Organiser" && (
               <LinkContainer to="/write">
-                <Nav.Link className="topListItem">WRITE</Nav.Link>
+                <Nav.Link className="topListItem">Write</Nav.Link>
               </LinkContainer>
             )}
             {!user && (
               <LinkContainer to="/login">
-                <Nav.Link className="topListItem">LOGIN</Nav.Link>
+                <Nav.Link className="topListItem">Login</Nav.Link>
               </LinkContainer>
             )}
             {!user && (
               <LinkContainer to="/register">
-                <Nav.Link className="topListItem">REGISTER</Nav.Link>
+                <Nav.Link className="topListItem">Register</Nav.Link>
               </LinkContainer>
             )}
+            <LinkContainer to="/advertisments">
+              <Nav.Link className="topListItem">Events</Nav.Link>
+            </LinkContainer>
             {user && (
               <LinkContainer to="/messenger">
-                <Nav.Link className="topListItem">MESSAGE</Nav.Link>
+                <Nav.Link className="topListItem">Message</Nav.Link>
               </LinkContainer>
             )}
           </Nav>
