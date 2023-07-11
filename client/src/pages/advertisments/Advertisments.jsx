@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { SocketContext} from "../videoChat/Context";
+import { Context } from "../../context/Context";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
+
 import Post from "../../components/post/Post";
 
 import { Link } from "react-router-dom";
@@ -7,22 +10,31 @@ import { Link } from "react-router-dom";
 import axiosBaseURL from "../httpCommon";
 
 const Advertisments = () => {
-  const [location, setLocation] = useState("");
+  // const [location, setLocation] = useState("");
   const [locationList, setLocationList] = useState([]);
-  const [advertismentList, setAdvertismentList] = useState([]);
+  const [list, setList] = useState([]);
+  // const [advertismentList, setAdvertismentList] = useState([]);
+  const { user } = useContext(Context);
+  const { getNewAdInLocation, newAdvertisment, setNewAdvertisment, currentLocation, setCurrentLocation, advertismentList, setAdvertismentList, addUserToLocation, removeUserFromLocation } = useContext(SocketContext);
 
   useEffect(() => {
     console.log("Advertisments");
-    if (location === "") return;
+    if (currentLocation === "") return;
     const getAdvertisments = async () => {
       const data = await axiosBaseURL.get(
-        `/advertisment?location=${location}`
+        `/advertisment?location=${currentLocation}`
       );
         setAdvertismentList(data.data);
+        setList(data.data);
       console.log(data);
     };
     getAdvertisments();
-  }, [location]);
+    if( user && user._id && currentLocation ){
+      removeUserFromLocation(user._id, currentLocation);
+      addUserToLocation(user._id, currentLocation);
+    }
+    getNewAdInLocation(currentLocation);
+  }, [currentLocation]);
 
   useEffect(() => {
     const getLocations = async () => {
@@ -31,8 +43,22 @@ const Advertisments = () => {
       setLocationList(data.data);
     };
     getLocations();
+    getNewAdInLocation();
   }, []);
 
+  useEffect(() => {
+    setList(advertismentList);    
+  }, [advertismentList]);
+
+  // useEffect(() => {
+  //   console.log("Advertisments");
+  //   if (currentLocation === "") return; 
+  //   if (newAdvertisment.location === currentLocation) {
+  //     setAdvertismentList((prev) => [...prev, newAdvertisment]);
+  //   }
+  // }, [newAdvertisment, currentLocation]);
+
+console.log("advertismentList", advertismentList);
   return (
     <div>
       <Container className="m-2 p-2">
@@ -56,7 +82,7 @@ const Advertisments = () => {
             </p>
             <Form.Select
               aria-label="Default select example"
-              onChange={(e) => setLocation(e.target.value)}
+              onChange={(e) => setCurrentLocation(e.target.value)}
             >
               <option>Open this select menu</option>
               {locationList.map((location) => {
@@ -65,9 +91,12 @@ const Advertisments = () => {
             </Form.Select>
           </Col>
         </Row>
+        {!user && <Row className="justify-content-center">
+          For Real Time updates you need to login.
+        </Row>}
         <Row className="m-5 p-2 justify-content-end">
-          {advertismentList.map((advertisment) => (
-            <Post post={advertisment.post} />
+          {list?.map((advertisment) => (
+            <Post key={advertisment._id} post={advertisment.post} />
           ))}
         </Row>
       </Container>

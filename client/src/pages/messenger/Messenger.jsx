@@ -156,7 +156,7 @@ export default function Messenger() {
   };
 
   useEffect(() => { 
-    var timerLength = 3000;
+    var timerLength = 2000;
     const receiverId = currentChat?.members.find(
       (member) => member !== user._id
     )

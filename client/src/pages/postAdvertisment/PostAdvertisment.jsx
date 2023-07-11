@@ -1,4 +1,7 @@
 import {useState, useEffect, useContext} from "react";
+
+import { SocketContext} from "../videoChat/Context";
+
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import axiosBaseURL from "../httpCommon";
 import { Context } from "../../context/Context";
@@ -16,6 +19,10 @@ const PostAdvertisment = () => {
   const user = useContext(Context).user._id;
   // console.log("user from context",user);
 
+  const { newAdvertisment, setNewAdvertisment, currentLocation, setCurrentLocation, advertismentList, setAdvertismentList, addUserToLocation, removeUserFromLocation, getNewAdInLocation, postNewAdInLocation } = useContext(SocketContext);
+
+
+
   useEffect(() => {
     const getLocations = async () => {
       const data = await axiosBaseURL.get("/location");
@@ -32,8 +39,8 @@ const PostAdvertisment = () => {
     getLocations();
     getPosts();
   }, []);
-
-
+  
+  
   const handleSubmit = async () => {
     const newAdvertisment = {
       sender: user,
@@ -43,10 +50,16 @@ const PostAdvertisment = () => {
     // console.log(newAdvertisment);
     try {
       const res = await axiosBaseURL.post("/advertisment", newAdvertisment);
+      if( user && user._id && selectedLocation ){
+        // removeUserFromLocation(user._id, currentLocation);
+        addUserToLocation(user._id, currentLocation);
+        console.log("user added to location")
+      }
+      postNewAdInLocation(user, res.data, selectedLocation);
       setResult("Success! Advertisment Posted");
       console.log(res);
     } catch (err) {
-      setResult(err.stringify());
+      // setResult(err.stri);
       console.log(err);
     }
   };

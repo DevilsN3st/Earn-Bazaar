@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
             },
         });
         if( advertisments.length === 0 ) {
-            return res.status(200).json("No advertisments on this location found");
+            return res.status(500).json("No advertisments on this location found");
         }
         return res.status(200).json(advertisments);
     }

@@ -6,6 +6,13 @@ const io = require("socket.io")( process.env.PORT || 8900, {
 
 let users = [];
 
+let locations = {};
+
+const addUserToLocation = ( userId, location, socketId ) => {
+  locations[location] ??= [];
+  locations[location].push({userId, socketId});
+}
+
 const addUser = (userId, socketId) => {
   !users.some((user) => user.userId === userId) &&
     users.push({ userId: userId, socketId: socketId });
@@ -84,6 +91,30 @@ io.on("connection", (socket) => {
 	});
 
 
+  socket.on("addUserToLocation", ({ userId, location }) => {
+    console.log("add user to location");
+    addUserToLocation(userId, location, socket.id);
+    console.log("locations:", locations);
+    // console.log("locations:", locations);
+    // io.emit("getLocations", locations);
+  });
+  socket.on("removeUserFromLocation", ({ userId, location }) => {
+    console.log("remove user from location", locations[location], typeof locations[location]);
+    if(locations[location])locations[location] = locations[location].filter((user) => user.userId !== userId); 
+    Object.keys(locations).forEach((loc) => {
+      locations[loc] = locations[loc].filter((user) => user.socketId !== socket.id); 
+    });
+  });
+
+  socket.on("postNewAdInLocation", ({ user, location, ad }) => {
+    console.log("post new ad in location");
+    addUserToLocation(user, location, socket.id);
+    locations[location].forEach((loc) => {
+      console.log(loc.socketId);
+      io.to(loc.socketId).emit("postNewAdInLocation", { user, location, ad });
+    });
+    console.log("locations:", locations);
+  });
 
 
   //when disconnect
