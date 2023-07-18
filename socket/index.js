@@ -3,6 +3,7 @@ const io = require("socket.io")( process.env.PORT || 8900, {
     origin: process.env.ORIGIN,
   },
 });
+console.log("server started");
 
 let users = [];
 
@@ -25,6 +26,19 @@ const removeUser = (socketId) => {
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
 };
+const removeUserFromAllLocation = ( socket ) => {
+  Object.keys(locations).forEach((loc) => {
+    locations[loc] = locations[loc].filter((user) => user.socketId !== socket.id); 
+  });
+}
+const removeUserFromLocation = ({ userId, location }, socket) => {
+  console.log("remove user from location", locations[location], typeof locations[location]);
+    // if(locations[location])locations[location] = locations[location].filter((user) => user.userId !== userId); 
+    // Object.keys(locations).forEach((loc) => {
+    //   locations[loc] = locations[loc].filter((user) => user.socketId !== socket.id); 
+    // });
+    removeUserFromAllLocation(userId, socket);
+  }
 
 io.on("connection", (socket) => {
   //when ceonnect
@@ -95,24 +109,24 @@ io.on("connection", (socket) => {
     console.log("add user to location");
     addUserToLocation(userId, location, socket.id);
     console.log("locations:", locations);
+    socket.join(location);
     // console.log("locations:", locations);
     // io.emit("getLocations", locations);
   });
   socket.on("removeUserFromLocation", ({ userId, location }) => {
-    console.log("remove user from location", locations[location], typeof locations[location]);
-    if(locations[location])locations[location] = locations[location].filter((user) => user.userId !== userId); 
-    Object.keys(locations).forEach((loc) => {
-      locations[loc] = locations[loc].filter((user) => user.socketId !== socket.id); 
-    });
+    removeUserFromLocation({ userId, location }, socket);
+    socket.leave(location);
   });
 
   socket.on("postNewAdInLocation", ({ user, location, ad }) => {
     console.log("post new ad in location");
     addUserToLocation(user, location, socket.id);
-    locations[location].forEach((loc) => {
-      console.log(loc.socketId);
-      io.to(loc.socketId).emit("postNewAdInLocation", { user, location, ad });
-    });
+    socket.join(location);
+    // locations[location].forEach((loc) => {
+    //   console.log(loc.socketId);
+    //   io.to(loc.socketId).emit("postNewAdInLocation", { user, location, ad });
+    // });
+    io.to(location).emit("postNewAdInLocation", { user, location, ad });
     console.log("locations:", locations);
   });
 
@@ -121,6 +135,8 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("a user disconnected!");
     removeUser(socket.id);
+    removeUserFromAllLocation(socket);
+    socket.leaveAll();
     io.emit("getUsers", users);
   });
 });

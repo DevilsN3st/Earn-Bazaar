@@ -25,7 +25,7 @@ const ContextSocketProvider = ({ children }) => {
   //advertisment
   const [advertismentList, setAdvertismentList] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [newAdvertisment, setNewAdvertisment] = useState("");
+  // const [newAdvertisment, setNewAdvertisment] = useState("");
   // const [arrivalAdvertisment, setArrivalAdvertisment] = useState(null);
   // const { newAdvertisment, setNewAdvertisment, currentLocation, setCurrentLocation, advertismentList, setAdvertismentList, addUserToLocation, removeUserFromLocation, getNewMessageInLocation, postNewMessageInLocation } = SocketContext;
 
@@ -179,10 +179,11 @@ const ContextSocketProvider = ({ children }) => {
       post: post.data,
       user: data.user,
     };
-    console.log("newAdvertisment",newAdvertisment)
-    if (newAdvertisment.location === currentLocation) {
+    console.log("newAdvertisment",tempAdvertisment)
+    if (tempAdvertisment.location === currentLocation) {
       setAdvertismentList((prev) => [...prev, tempAdvertisment]);
     }
+    console.log("advertismentList",advertismentList);
   });
   };
 
@@ -233,8 +234,8 @@ const ContextSocketProvider = ({ children }) => {
         sendTypingUpdate,
         sendStopTypingUpdate,
         friendTypingStatus,
-        newAdvertisment,
-        setNewAdvertisment,
+        // newAdvertisment,
+        // setNewAdvertisment,
         currentLocation,
         setCurrentLocation,
         advertismentList,

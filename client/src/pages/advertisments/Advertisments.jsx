@@ -47,7 +47,9 @@ const Advertisments = () => {
   }, []);
 
   useEffect(() => {
-    setList(advertismentList);    
+    console.log("advertismentlist from advertisment",advertismentList)  
+    setList(advertismentList);  
+    console.log("list from advertisment", list)  
   }, [advertismentList]);
 
   // useEffect(() => {

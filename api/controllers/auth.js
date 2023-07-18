@@ -31,6 +31,7 @@ const newRegister = async (req, res) => {
 }
 
 const login = async (req, res) => {     
+  console.log("login");
     try {
         const user = await User.findOne({ username: req.body.username });
     
